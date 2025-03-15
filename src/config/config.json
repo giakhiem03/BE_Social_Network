@@ -1,0 +1,26 @@
+{
+    "development": {
+        "username": "root",
+        "password": "khiemvn412",
+        "database": "project_nodejs",
+        "host": "127.0.0.1",
+        "dialect": "mysql",
+        "timezone": "+07:00"
+    },
+    "test": {
+        "username": "root",
+        "password": "khiemvn412",
+        "database": "database_test",
+        "host": "127.0.0.1",
+        "dialect": "mysql",
+        "timezone": "+07:00"
+    },
+    "production": {
+        "username": "root",
+        "password": "khiemvn412",
+        "database": "database_production",
+        "host": "127.0.0.1",
+        "dialect": "mysql",
+        "timezone": "+07:00"
+    }
+}
