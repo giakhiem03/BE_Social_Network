@@ -43,17 +43,6 @@ class PostService {
         });
     };
 
-    // getAllComment = () => {
-    //     return new Promise(async (resolve, reject) => {
-    //         try {
-    //             let comments = await db.Comment.findAll();
-    //             resolve({ errCode: 0, data: comments });
-    //         } catch (error) {
-    //             resolve({ errCode: -1, message: error });
-    //         }
-    //     });
-    // };
-
     addNewComment = (comment) => {
         return new Promise(async (resolve, reject) => {
             try {

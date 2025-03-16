@@ -8,9 +8,15 @@ module.exports = (sequelize, DataTypes) => {
                 targetKey: "id",
                 as: "genders",
             });
-            // User.hasOne(models.Markdown, {
-            //     foreignKey: "doctorId",
-            // });
+            User.hasMany(models.Friendship, {
+                foreignKey: "user_id_1",
+                as: "friendship_1", // những lời mời bạn bè đã gửi đi
+            });
+
+            User.hasMany(models.Friendship, {
+                foreignKey: "user_id_2",
+                as: "friendship_2", // những lời mời bạn bè đã nhận
+            });
         }
     }
     User.init(

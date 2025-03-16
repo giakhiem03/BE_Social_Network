@@ -1,4 +1,4 @@
-import userRouter from "./home";
+import userRouter from "./user";
 import postRouter from "./post";
 
 function Route(app) {
