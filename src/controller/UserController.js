@@ -93,6 +93,33 @@ class UserController {
             return res.status(200).json({ errCode: -1, message: error });
         }
     };
+
+    getChatRoom = async (req, res) => {
+        try {
+            let { user_1, user_2 } = req.query;
+            let response = await UserService.getChatRoom(user_1, user_2);
+
+            return res.status(200).json(response);
+        } catch (error) {
+            return res.status(200).json({ errCode: -1, message: error });
+        }
+    };
+
+    sendMessage = async (req, res) => {
+        try {
+            let { room_chat_id, user_id, content, image } = req.query;
+            let response = await UserService.sendMessage(
+                room_chat_id,
+                user_id,
+                content,
+                image
+            );
+
+            return res.status(200).json(response);
+        } catch (error) {
+            return res.status(200).json({ errCode: -1, message: error });
+        }
+    };
 }
 
 export default new UserController();

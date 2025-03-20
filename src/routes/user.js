@@ -2,15 +2,21 @@ import express from "express";
 import UserController from "../controller/UserController";
 const router = express.Router();
 
-// api
-router.get("/", UserController.getHome);
+// api login
 router.post("/login", UserController.loginAccount);
 router.post("/register", UserController.registerAccount);
-
+// api search
 router.get("/search", UserController.searchUserByFullName);
-router.get("/:id", UserController.getDetailUser);
+// api add friend
 router.post("/addfriend", UserController.addNewFriend);
 router.post("/acceptRequestAddFriend", UserController.acceptRequestAddFriend);
 router.post("/rejectRequestAddFriend", UserController.rejectRequestAddFriend);
-
+// api chat_room/message
+router.get("/get-chat-room", UserController.getChatRoom);
+router.post("/send-message", UserController.sendMessage);
+// router.post("/rejectRequestAddFriend", UserController.rejectRequestAddFriend);
+// api get detail
+router.get("/:id", UserController.getDetailUser);
+// api default
+router.get("/", UserController.getHome);
 export default router;

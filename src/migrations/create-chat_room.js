@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable("User_Reaction_Post", {
+        await queryInterface.createTable("ChatRooms", {
             id: {
                 allowNull: false,
                 autoIncrement: true,
@@ -15,8 +15,8 @@ module.exports = {
             image: {
                 type: Sequelize.BLOB("medium"),
             },
-            content: {
-                type: Sequelize.TEXT,
+            message_id: {
+                type: Sequelize.INTEGER,
             },
             user_1: {
                 type: Sequelize.INTEGER,
@@ -35,6 +35,6 @@ module.exports = {
         });
     },
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable("User_Reaction_Post");
+        await queryInterface.dropTable("ChatRooms");
     },
 };

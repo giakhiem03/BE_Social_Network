@@ -1,5 +1,6 @@
 import db from "../models";
 import bcrypt from "bcrypt";
+import { raw } from "mysql2";
 import { Op, where } from "sequelize";
 
 class UserService {
@@ -42,6 +43,34 @@ class UserService {
                             model: db.Gender,
                             as: "genders",
                             attributes: ["gender"],
+                        },
+                        {
+                            model: db.Friendship,
+                            as: "friendship_1",
+                            where: { status: 2 },
+                            attributes: ["user_id_2"],
+                            include: [
+                                {
+                                    model: db.User,
+                                    as: "user_2",
+                                    attributes: { exclude: "password" },
+                                },
+                            ],
+                            required: false,
+                        },
+                        {
+                            model: db.Friendship,
+                            as: "friendship_2",
+                            where: { status: 2 },
+                            attributes: ["user_id_1"],
+                            include: [
+                                {
+                                    model: db.User,
+                                    as: "user_1",
+                                    attributes: { exclude: "password" },
+                                },
+                            ],
+                            required: false,
                         },
                     ],
                     raw: true,
@@ -221,6 +250,101 @@ class UserService {
                 resolve({
                     errCode: 0,
                     message: "Delete friendship succeed!",
+                });
+            } catch (error) {
+                resolve({ errCode: -1, message: error });
+            }
+        });
+    };
+
+    getChatRoom = (user_1, user_2) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                // TH1: user_1 = user_2, user_2 = user_1
+                let res1 = await db.ChatRoom.findOne({
+                    where: {
+                        user_1: user_2,
+                        user_2: user_1,
+                    },
+                    include: [
+                        {
+                            model: db.User,
+                            as: "user1",
+                            attributes: ["fullName"],
+                        },
+                        {
+                            model: db.Message,
+                            as: "message",
+                            attributes: ["user_id", "content", "image"],
+                        },
+                    ],
+                });
+
+                if (res1) {
+                    let res = res1?.get({ plain: true });
+                    res.user2 = res.user1;
+                    delete res.user1;
+                    return resolve({
+                        errCode: 0,
+                        data: res,
+                    });
+                }
+
+                // TH2: user_1 = user_1, user_2 = user_2
+                let res2 = await db.ChatRoom.findOne({
+                    where: {
+                        user_1: user_1,
+                        user_2: user_2,
+                    },
+                    include: [
+                        {
+                            model: db.User,
+                            as: "user2",
+                            attributes: ["fullName"],
+                        },
+                        {
+                            model: db.Message,
+                            as: "message",
+                            attributes: ["user_id", "content", "image"],
+                        },
+                    ],
+                });
+
+                if (res2) {
+                    return resolve({
+                        errCode: 0,
+                        data: res2,
+                    });
+                }
+
+                // Nếu không có chat room nào → tạo mới
+                const newRoom = await db.ChatRoom.create({
+                    user_1,
+                    user_2,
+                });
+
+                return resolve({
+                    errCode: 0,
+                    data: newRoom,
+                });
+            } catch (error) {
+                return resolve({ errCode: -1, message: error.message });
+            }
+        });
+    };
+
+    sendMessage = (room_chat_id, user_id, content, image) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                await db.Message.create({
+                    room_chat_id,
+                    user_id,
+                    content,
+                    image,
+                });
+                resolve({
+                    errCode: 0,
+                    message: "Send a message succeed!",
                 });
             } catch (error) {
                 resolve({ errCode: -1, message: error });
