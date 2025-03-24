@@ -24,8 +24,14 @@ class PostController {
 
     addNewComment = async (req, res) => {
         try {
-            let comment = req.body;
-            let response = await PostService.addNewComment(comment);
+            const { post_id, user_id, content } = req.body;
+            const avatarPath = req.file ? `/img/${req.file.filename}` : null;
+            let response = await PostService.addNewComment(
+                post_id,
+                user_id,
+                avatarPath,
+                content
+            );
 
             return res.status(200).json(response);
         } catch (error) {
@@ -37,6 +43,17 @@ class PostController {
         try {
             let { user_id, post_id } = req.query;
             let response = await PostService.toggleReaction(user_id, post_id);
+
+            return res.status(200).json(response);
+        } catch (error) {
+            return res.status(200).json({ errCode: -1, message: error });
+        }
+    };
+
+    getCommentsById = async (req, res) => {
+        try {
+            let { id } = req.query;
+            let response = await PostService.getCommentsById(id);
 
             return res.status(200).json(response);
         } catch (error) {

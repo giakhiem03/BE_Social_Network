@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         {
             post_id: DataTypes.INTEGER,
             user_id: DataTypes.INTEGER,
-            image: DataTypes.BLOB("medium"),
+            image: DataTypes.TEXT,
             content: DataTypes.TEXT,
         },
         {

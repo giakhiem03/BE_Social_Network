@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
 
     Post.init(
         {
-            image: DataTypes.BLOB("medium"),
+            image: DataTypes.TEXT,
             post_by: DataTypes.INTEGER,
             caption: DataTypes.TEXT,
             description: DataTypes.TEXT,

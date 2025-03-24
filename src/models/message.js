@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
             room_chat_id: DataTypes.INTEGER,
             user_id: DataTypes.INTEGER,
             content: DataTypes.TEXT,
-            image: DataTypes.BLOB("medium"),
+            image: DataTypes.TEXT,
         },
         {
             sequelize,

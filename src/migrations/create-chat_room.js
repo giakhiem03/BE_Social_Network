@@ -13,7 +13,7 @@ module.exports = {
                 type: Sequelize.TEXT,
             },
             image: {
-                type: Sequelize.BLOB("medium"),
+                type: Sequelize.TEXT,
             },
             message_id: {
                 type: Sequelize.INTEGER,

@@ -43,10 +43,10 @@ class PostService {
         });
     };
 
-    addNewComment = (comment) => {
+    addNewComment = (post_id, user_id, image, content) => {
         return new Promise(async (resolve, reject) => {
             try {
-                await db.Comment.create(comment);
+                await db.Comment.create({ post_id, user_id, image, content });
                 resolve({
                     errCode: 0,
                     message: "Create a new comment succeed!",
@@ -86,6 +86,31 @@ class PostService {
                 });
             } catch (error) {
                 resolve({ errCode: -1, message: error });
+            }
+        });
+    };
+
+    getCommentsById = (id) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let comments = await db.Comment.findAll({
+                    where: { post_id: id },
+                    include: [
+                        {
+                            model: db.User,
+                            attributes: { exclude: ["password"] },
+                            as: "user",
+                        },
+                    ],
+                    raw: true,
+                    nest: true,
+                });
+                resolve({
+                    errCode: 0,
+                    data: comments,
+                });
+            } catch (error) {
+                resolve({ errCode: -1, message: error.message });
             }
         });
     };

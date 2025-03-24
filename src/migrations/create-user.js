@@ -25,7 +25,7 @@ module.exports = {
                 type: Sequelize.INTEGER,
             },
             avatar: {
-                type: Sequelize.BLOB("medium"),
+                type: Sequelize.TEXT,
             },
             createdAt: {
                 allowNull: false,

@@ -10,7 +10,7 @@ module.exports = {
                 type: Sequelize.INTEGER,
             },
             image: {
-                type: Sequelize.BLOB("medium"),
+                type: Sequelize.TEXT,
             },
             post_by: {
                 type: Sequelize.INTEGER,

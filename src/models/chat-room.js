@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     ChatRoom.init(
         {
             room_name: DataTypes.STRING,
-            image: DataTypes.BLOB("medium"),
+            image: DataTypes.TEXT,
             user_1: DataTypes.INTEGER,
             user_2: DataTypes.INTEGER,
         },

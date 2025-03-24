@@ -19,7 +19,7 @@ module.exports = {
                 type: Sequelize.TEXT,
             },
             image: {
-                type: Sequelize.BLOB("medium"),
+                type: Sequelize.TEXT,
             },
             createdAt: {
                 allowNull: false,
