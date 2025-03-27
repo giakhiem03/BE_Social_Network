@@ -15,7 +15,7 @@ router.post("/rejectRequestAddFriend", UserController.rejectRequestAddFriend);
 router.get("/get-chat-room", UserController.getChatRoom);
 router.post("/send-message", UserController.sendMessage);
 // router.post("/rejectRequestAddFriend", UserController.rejectRequestAddFriend);
-// api get detail
+// api get detail user
 router.get("/:id", UserController.getDetailUser);
 // api default
 router.get("/", UserController.getHome);

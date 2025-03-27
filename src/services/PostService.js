@@ -1,33 +1,35 @@
-import { where } from "sequelize";
+import { raw } from "mysql2";
 import db from "../models";
+import UserService from "./UserService";
+import { Op } from "sequelize";
 
 class PostService {
-    getAllPostForHomePage = () => {
+    getAllPostForHomePage = (username) => {
         return new Promise(async (resolve, reject) => {
             try {
-                let posts = await db.Post.findAll({
-                    include: [
-                        {
-                            model: db.Comment,
-                            as: "comments",
-                            include: [
-                                {
-                                    model: db.User,
-                                    attributes: { exclude: ["password"] },
-                                    as: "user", // Lấy luôn thông tin user comment nếu muốn
-                                },
-                            ],
-                        },
-                        {
-                            model: db.User,
-                            attributes: { exclude: ["password"] },
-                            as: "userPost", // Người đăng bài viết
-                        },
-                    ],
-                });
-                resolve({ errCode: 0, data: posts });
+                let user = await UserService.getArrUserId(username);
+                if (user.length > 0) {
+                    let posts = await db.Post.findAll({
+                        where: { post_by: { [Op.in]: user } },
+                        include: [
+                            {
+                                model: db.User,
+                                attributes: { exclude: ["password"] },
+                                as: "userPost", // Người đăng bài viết
+                            },
+                            {
+                                model: db.User_React_Post,
+                                as: "reaction",
+                                attributes: ["user_id"],
+                            },
+                        ],
+                    });
+                    resolve({ errCode: 0, data: posts });
+                } else {
+                    resolve({ errCode: 1, message: "User not found" });
+                }
             } catch (error) {
-                resolve({ errCode: -1, message: error });
+                resolve({ errCode: -1, message: error.message });
             }
         });
     };
@@ -38,7 +40,7 @@ class PostService {
                 await db.Post.create(post);
                 resolve({ errCode: 0, message: "Create a new post succeed!" });
             } catch (error) {
-                resolve({ errCode: -1, message: error });
+                resolve({ errCode: -1, message: error.message });
             }
         });
     };
@@ -52,7 +54,7 @@ class PostService {
                     message: "Create a new comment succeed!",
                 });
             } catch (error) {
-                resolve({ errCode: -1, message: error });
+                resolve({ errCode: -1, message: error.message });
             }
         });
     };
@@ -85,7 +87,7 @@ class PostService {
                     message: message,
                 });
             } catch (error) {
-                resolve({ errCode: -1, message: error });
+                resolve({ errCode: -1, message: error.message });
             }
         });
     };
@@ -110,7 +112,7 @@ class PostService {
                     data: comments,
                 });
             } catch (error) {
-                resolve({ errCode: -1, message: error.message });
+                resolve({ errCode: -1, message: error.message.message });
             }
         });
     };

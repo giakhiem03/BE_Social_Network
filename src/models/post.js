@@ -13,6 +13,11 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: "post_id",
                 as: "comments",
             });
+
+            Post.hasMany(models.User_React_Post, {
+                foreignKey: "post_id",
+                as: "reaction",
+            });
         }
     }
 
@@ -22,7 +27,6 @@ module.exports = (sequelize, DataTypes) => {
             post_by: DataTypes.INTEGER,
             caption: DataTypes.TEXT,
             description: DataTypes.TEXT,
-            quantity_reaction: DataTypes.INTEGER,
         },
         {
             sequelize,

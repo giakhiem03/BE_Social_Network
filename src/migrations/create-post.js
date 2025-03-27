@@ -21,9 +21,6 @@ module.exports = {
             description: {
                 type: Sequelize.TEXT,
             },
-            quantity_reaction: {
-                type: Sequelize.INTEGER,
-            },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE,

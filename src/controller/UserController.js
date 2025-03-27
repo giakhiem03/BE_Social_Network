@@ -12,7 +12,9 @@ class UserController {
 
             return res.status(200).json(response);
         } catch (error) {
-            return res.status(200).json({ errCode: -1, message: error });
+            return res
+                .status(200)
+                .json({ errCode: -1, message: error.message });
         }
     };
 
@@ -26,7 +28,9 @@ class UserController {
 
             return res.status(200).json(response);
         } catch (error) {
-            return res.status(200).json({ errCode: -1, message: error });
+            return res
+                .status(200)
+                .json({ errCode: -1, message: error.message });
         }
     };
 
@@ -37,7 +41,9 @@ class UserController {
 
             return res.status(200).json(response);
         } catch (error) {
-            return res.status(200).json({ errCode: -1, message: error });
+            return res
+                .status(200)
+                .json({ errCode: -1, message: error.message });
         }
     };
 
@@ -48,7 +54,9 @@ class UserController {
 
             return res.status(200).json(response);
         } catch (error) {
-            return res.status(200).json({ errCode: -1, message: error });
+            return res
+                .status(200)
+                .json({ errCode: -1, message: error.message });
         }
     };
 
@@ -60,7 +68,9 @@ class UserController {
 
             return res.status(200).json(response);
         } catch (error) {
-            return res.status(200).json({ errCode: -1, message: error });
+            return res
+                .status(200)
+                .json({ errCode: -1, message: error.message });
         }
     };
 
@@ -75,7 +85,9 @@ class UserController {
 
             return res.status(200).json(response);
         } catch (error) {
-            return res.status(200).json({ errCode: -1, message: error });
+            return res
+                .status(200)
+                .json({ errCode: -1, message: error.message });
         }
     };
 
@@ -90,7 +102,9 @@ class UserController {
 
             return res.status(200).json(response);
         } catch (error) {
-            return res.status(200).json({ errCode: -1, message: error });
+            return res
+                .status(200)
+                .json({ errCode: -1, message: error.message });
         }
     };
 
@@ -101,7 +115,9 @@ class UserController {
 
             return res.status(200).json(response);
         } catch (error) {
-            return res.status(200).json({ errCode: -1, message: error });
+            return res
+                .status(200)
+                .json({ errCode: -1, message: error.message });
         }
     };
 
@@ -117,7 +133,9 @@ class UserController {
 
             return res.status(200).json(response);
         } catch (error) {
-            return res.status(200).json({ errCode: -1, message: error });
+            return res
+                .status(200)
+                .json({ errCode: -1, message: error.message });
         }
     };
 }

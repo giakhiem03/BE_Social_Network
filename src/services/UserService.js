@@ -1,7 +1,7 @@
 import db from "../models";
 import bcrypt from "bcrypt";
 import { raw } from "mysql2";
-import { Op, where } from "sequelize";
+import { Op } from "sequelize";
 
 class UserService {
     salt = bcrypt.genSaltSync(10);
@@ -27,7 +27,7 @@ class UserService {
                     resolve({ errCode: 0, message: "Create a user succeed!" });
                 }
             } catch (error) {
-                resolve({ errCode: -1, message: error });
+                resolve({ errCode: -1, message: error.message });
             }
         });
     };
@@ -99,7 +99,67 @@ class UserService {
                     resolve({ errCode: 2, message: "User not found" });
                 }
             } catch (error) {
-                resolve({ errCode: -1, message: error });
+                resolve({ errCode: -1, message: error.message });
+            }
+        });
+    };
+
+    getArrUserId = (username) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let user = await db.User.findOne({
+                    where: { username },
+                    attributes: ["id"],
+                    include: [
+                        {
+                            model: db.Friendship,
+                            as: "friendship_1",
+                            where: { status: 2 },
+                            attributes: ["id"],
+                            include: [
+                                {
+                                    model: db.User,
+                                    as: "user_2",
+                                    attributes: ["id"],
+                                },
+                            ],
+                            required: false,
+                        },
+                        {
+                            model: db.Friendship,
+                            as: "friendship_2",
+                            where: { status: 2 },
+                            attributes: ["id"],
+                            include: [
+                                {
+                                    model: db.User,
+                                    as: "user_1",
+                                    attributes: ["id"],
+                                },
+                            ],
+                            required: false,
+                        },
+                    ],
+                    raw: true,
+                    nest: true,
+                });
+                if (user) {
+                    // Lấy danh sách ID bạn bè từ cả hai bảng
+                    let arr_id = [];
+                    arr_id.push(user.id);
+                    if (user.friendship_1) {
+                        arr_id.push(user.friendship_1.user_2.id);
+                    }
+                    if (user.friendship_2) {
+                        arr_id.push(user.friendship_2.user_1.id);
+                    }
+                    const arr = arr_id.filter(Boolean);
+                    resolve(arr);
+                } else {
+                    resolve([]);
+                }
+            } catch (error) {
+                resolve([]);
             }
         });
     };
@@ -133,7 +193,7 @@ class UserService {
                     resolve({ errCode: 1, data: fullname });
                 }
             } catch (error) {
-                resolve({ errCode: -1, message: error });
+                resolve({ errCode: -1, message: error.message });
             }
         });
     };
@@ -191,7 +251,7 @@ class UserService {
                     resolve({ errCode: 1, message: `User isn't exists!` });
                 }
             } catch (error) {
-                resolve({ errCode: -1, message: error });
+                resolve({ errCode: -1, message: error.message });
             }
         });
     };
@@ -209,7 +269,7 @@ class UserService {
                     message: "Send a request add friend succeed!",
                 });
             } catch (error) {
-                resolve({ errCode: -1, message: error });
+                resolve({ errCode: -1, message: error.message });
             }
         });
     };
@@ -231,7 +291,7 @@ class UserService {
                     message: "Update status friendship succeed!",
                 });
             } catch (error) {
-                resolve({ errCode: -1, message: error });
+                resolve({ errCode: -1, message: error.message });
             }
         });
     };
@@ -252,7 +312,7 @@ class UserService {
                     message: "Delete friendship succeed!",
                 });
             } catch (error) {
-                resolve({ errCode: -1, message: error });
+                resolve({ errCode: -1, message: error.message });
             }
         });
     };
@@ -328,7 +388,7 @@ class UserService {
                     data: newRoom,
                 });
             } catch (error) {
-                return resolve({ errCode: -1, message: error.message });
+                return resolve({ errCode: -1, message: error.message.message });
             }
         });
     };
@@ -347,7 +407,7 @@ class UserService {
                     message: "Send a message succeed!",
                 });
             } catch (error) {
-                resolve({ errCode: -1, message: error });
+                resolve({ errCode: -1, message: error.message });
             }
         });
     };
