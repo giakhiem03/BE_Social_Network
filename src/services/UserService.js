@@ -411,6 +411,56 @@ class UserService {
             }
         });
     };
+
+    getNotiFyRequest = (id) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await db.Friendship.findAll({
+                    where: {
+                        status: 1,
+                        [Op.or]: [{ user_id_1: id }, { user_id_2: id }],
+                    },
+                    include: [
+                        {
+                            model: db.User,
+                            as: "user_1",
+                        },
+                        {
+                            model: db.User,
+                            as: "user_2",
+                        },
+                    ],
+                });
+
+                if (!res || res.length === 0) {
+                    return resolve({
+                        errCode: 0,
+                        data: [],
+                    });
+                }
+                // Chỉ lấy thông tin của người còn lại (không phải id)
+                let result = res.map((friendship) => {
+                    let friend =
+                        friendship.user_id_1 === id
+                            ? friendship.user_2
+                            : friendship.user_1;
+
+                    return {
+                        id: friend.id,
+                        fullName: friend.fullName,
+                        avatar: friend.avatar,
+                        createdAt: friend.createdAt,
+                    };
+                });
+                resolve({
+                    errCode: 0,
+                    data: result,
+                });
+            } catch (error) {
+                reject({ errCode: -1, message: error.message });
+            }
+        });
+    };
 }
 
 export default new UserService();

@@ -20,10 +20,34 @@ class PostController {
         }
     };
 
+    getAllPostById = async (req, res) => {
+        try {
+            let { id } = req.query;
+            let response = await PostService.getAllPostById(id);
+            // Clone dữ liệu để tránh lỗi circular reference
+            const postsWithReactionIds = response?.data?.map((post) => ({
+                ...post.toJSON(), // Chuyển Sequelize Model về object JSON
+                reaction: post.reaction?.map((r) => r.user_id),
+            }));
+            return res
+                .status(200)
+                .json({ errCode: 0, data: postsWithReactionIds });
+        } catch (error) {
+            return res
+                .status(200)
+                .json({ errCode: -1, message: error.message });
+        }
+    };
+
     addNewPost = async (req, res) => {
         try {
-            let post = req.body;
-            let response = await PostService.addNewPost(post);
+            let { user_id, description } = req.body;
+            const image = req.file ? `/img/${req.file.filename}` : null;
+            let response = await PostService.addNewPost(
+                user_id,
+                image,
+                description
+            );
 
             return res.status(200).json(response);
         } catch (error) {

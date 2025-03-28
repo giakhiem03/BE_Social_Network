@@ -15,9 +15,6 @@ module.exports = {
             post_by: {
                 type: Sequelize.INTEGER,
             },
-            caption: {
-                type: Sequelize.TEXT,
-            },
             description: {
                 type: Sequelize.TEXT,
             },

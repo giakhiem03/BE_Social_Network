@@ -24,6 +24,7 @@ class PostService {
                             },
                         ],
                     });
+                    posts = posts.reverse();
                     resolve({ errCode: 0, data: posts });
                 } else {
                     resolve({ errCode: 1, message: "User not found" });
@@ -34,10 +35,31 @@ class PostService {
         });
     };
 
-    addNewPost = (post) => {
+    getAllPostById = (id) => {
         return new Promise(async (resolve, reject) => {
             try {
-                await db.Post.create(post);
+                let posts = await db.Post.findAll({
+                    where: { post_by: id },
+                    include: [
+                        {
+                            model: db.User_React_Post,
+                            as: "reaction",
+                            attributes: ["user_id"],
+                        },
+                    ],
+                });
+                posts = posts.reverse();
+                resolve({ errCode: 0, data: posts });
+            } catch (error) {
+                resolve({ errCode: -1, message: error.message });
+            }
+        });
+    };
+
+    addNewPost = (post_by, image, description) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                await db.Post.create({ post_by, image, description });
                 resolve({ errCode: 0, message: "Create a new post succeed!" });
             } catch (error) {
                 resolve({ errCode: -1, message: error.message });
@@ -112,7 +134,7 @@ class PostService {
                     data: comments,
                 });
             } catch (error) {
-                resolve({ errCode: -1, message: error.message.message });
+                resolve({ errCode: -1, message: error.message });
             }
         });
     };

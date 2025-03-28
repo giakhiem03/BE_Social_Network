@@ -18,11 +18,17 @@ module.exports = {
             password: {
                 type: Sequelize.STRING,
             },
+            bio: {
+                type: Sequelize.STRING,
+            },
             email: {
                 type: Sequelize.STRING,
             },
             gender: {
                 type: Sequelize.INTEGER,
+            },
+            background: {
+                type: Sequelize.TEXT,
             },
             avatar: {
                 type: Sequelize.TEXT,

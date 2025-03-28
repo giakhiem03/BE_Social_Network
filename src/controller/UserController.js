@@ -138,6 +138,19 @@ class UserController {
                 .json({ errCode: -1, message: error.message });
         }
     };
+
+    getNotiFyRequest = async (req, res) => {
+        try {
+            let { id } = req.query;
+            let response = await UserService.getNotiFyRequest(id);
+
+            return res.status(200).json(response);
+        } catch (error) {
+            return res
+                .status(200)
+                .json({ errCode: -1, message: error.message });
+        }
+    };
 }
 
 export default new UserController();

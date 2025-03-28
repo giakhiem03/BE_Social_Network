@@ -7,8 +7,10 @@ const router = express.Router();
 // api post
 // get all post
 router.get("/", PostController.getAllPostForHomePage);
+// get posts from user
+router.get("/profile", PostController.getAllPostById);
 // add new post
-router.post("/", PostController.addNewPost);
+router.post("/", upload.single("image"), PostController.addNewPost);
 
 // api comment
 // get comments
