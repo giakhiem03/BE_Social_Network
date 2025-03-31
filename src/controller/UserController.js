@@ -151,6 +151,19 @@ class UserController {
                 .json({ errCode: -1, message: error.message });
         }
     };
+
+    getFriendList = async (req, res) => {
+        try {
+            let { id } = req.query;
+            let response = await UserService.getFriendList(id);
+
+            return res.status(200).json(response);
+        } catch (error) {
+            return res
+                .status(200)
+                .json({ errCode: -1, message: error.message });
+        }
+    };
 }
 
 export default new UserController();

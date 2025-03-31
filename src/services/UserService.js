@@ -461,6 +461,67 @@ class UserService {
             }
         });
     };
+
+    getFriendList = (id) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let user = await db.User.findOne({
+                    where: { id },
+                    attributes: ["id"],
+                    include: [
+                        {
+                            model: db.Friendship,
+                            as: "friendship_1",
+                            where: { status: 2 },
+                            attributes: ["user_id_2"],
+                            include: [
+                                {
+                                    model: db.User,
+                                    as: "user_2",
+                                    attributes: { exclude: "password" },
+                                },
+                            ],
+                            required: false,
+                        },
+                        {
+                            model: db.Friendship,
+                            as: "friendship_2",
+                            where: { status: 2 },
+                            attributes: ["user_id_1"],
+                            include: [
+                                {
+                                    model: db.User,
+                                    as: "user_1",
+                                    attributes: { exclude: "password" },
+                                },
+                            ],
+                            required: false,
+                        },
+                    ],
+                    raw: true,
+                    nest: true,
+                });
+                // Lọc ra danh sách user hợp lệ
+                const users = [];
+
+                if (user.friendship_1?.user_2?.id) {
+                    users.push(user.friendship_1.user_2);
+                }
+
+                if (user.friendship_2?.user_1?.id) {
+                    users.push(user.friendship_2.user_1);
+                }
+                if (user) {
+                    resolve({
+                        errCode: 0,
+                        data: users,
+                    });
+                }
+            } catch (error) {
+                reject({ errCode: -1, message: error.message });
+            }
+        });
+    };
 }
 
 export default new UserService();

@@ -7,6 +7,8 @@ router.post("/login", UserController.loginAccount);
 router.post("/register", UserController.registerAccount);
 // api search
 router.get("/search", UserController.searchUserByFullName);
+// api get friend list
+router.get("/friend-list", UserController.getFriendList);
 // api add friend
 router.post("/addfriend", UserController.addNewFriend);
 router.post("/acceptRequestAddFriend", UserController.acceptRequestAddFriend);
