@@ -110,8 +110,8 @@ class UserController {
 
     getChatRoom = async (req, res) => {
         try {
-            let { user_1, user_2 } = req.query;
-            let response = await UserService.getChatRoom(user_1, user_2);
+            let { id_1, id_2 } = req.query;
+            let response = await UserService.getChatRoom(id_1, id_2);
 
             return res.status(200).json(response);
         } catch (error) {
@@ -123,7 +123,8 @@ class UserController {
 
     sendMessage = async (req, res) => {
         try {
-            let { room_chat_id, user_id, content, image } = req.query;
+            let { room_chat_id, user_id, content } = req.body;
+            const image = req.file ? `/img/${req.file.filename}` : null;
             let response = await UserService.sendMessage(
                 room_chat_id,
                 user_id,

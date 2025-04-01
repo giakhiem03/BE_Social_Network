@@ -326,27 +326,20 @@ class UserService {
                         user_1: user_2,
                         user_2: user_1,
                     },
+
+                    attributes: ["id"],
                     include: [
-                        {
-                            model: db.User,
-                            as: "user1",
-                            attributes: ["fullName"],
-                        },
                         {
                             model: db.Message,
                             as: "message",
-                            attributes: ["user_id", "content", "image"],
                         },
                     ],
                 });
 
                 if (res1) {
-                    let res = res1?.get({ plain: true });
-                    res.user2 = res.user1;
-                    delete res.user1;
                     return resolve({
                         errCode: 0,
-                        data: res,
+                        data: res1,
                     });
                 }
 
@@ -356,16 +349,11 @@ class UserService {
                         user_1: user_1,
                         user_2: user_2,
                     },
+                    attributes: ["id"],
                     include: [
-                        {
-                            model: db.User,
-                            as: "user2",
-                            attributes: ["fullName"],
-                        },
                         {
                             model: db.Message,
                             as: "message",
-                            attributes: ["user_id", "content", "image"],
                         },
                     ],
                 });
@@ -385,10 +373,10 @@ class UserService {
 
                 return resolve({
                     errCode: 0,
-                    data: newRoom,
+                    data: { id: newRoom.id, messages: [] },
                 });
             } catch (error) {
-                return resolve({ errCode: -1, message: error.message.message });
+                return resolve({ errCode: -1, message: error.message });
             }
         });
     };
@@ -465,56 +453,33 @@ class UserService {
     getFriendList = (id) => {
         return new Promise(async (resolve, reject) => {
             try {
-                let user = await db.User.findOne({
-                    where: { id },
-                    attributes: ["id"],
+                let friends = await db.Friendship.findAll({
+                    where: {
+                        status: 2,
+                        [Op.or]: [{ user_id_1: id }, { user_id_2: id }],
+                    },
                     include: [
                         {
-                            model: db.Friendship,
-                            as: "friendship_1",
-                            where: { status: 2 },
-                            attributes: ["user_id_2"],
-                            include: [
-                                {
-                                    model: db.User,
-                                    as: "user_2",
-                                    attributes: { exclude: "password" },
-                                },
-                            ],
-                            required: false,
+                            model: db.User,
+                            as: "user_1",
+                            attributes: { exclude: "password" },
                         },
                         {
-                            model: db.Friendship,
-                            as: "friendship_2",
-                            where: { status: 2 },
-                            attributes: ["user_id_1"],
-                            include: [
-                                {
-                                    model: db.User,
-                                    as: "user_1",
-                                    attributes: { exclude: "password" },
-                                },
-                            ],
-                            required: false,
+                            model: db.User,
+                            as: "user_2",
+                            attributes: { exclude: "password" },
                         },
                     ],
                     raw: true,
                     nest: true,
                 });
-                // Lọc ra danh sách user hợp lệ
-                const users = [];
-
-                if (user.friendship_1?.user_2?.id) {
-                    users.push(user.friendship_1.user_2);
-                }
-
-                if (user.friendship_2?.user_1?.id) {
-                    users.push(user.friendship_2.user_1);
-                }
-                if (user) {
+                let friendList = friends.map((friend) =>
+                    +friend.user_1.id === +id ? friend.user_2 : friend.user_1
+                );
+                if (friendList) {
                     resolve({
                         errCode: 0,
-                        data: users,
+                        data: friendList,
                     });
                 }
             } catch (error) {

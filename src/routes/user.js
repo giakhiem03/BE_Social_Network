@@ -1,5 +1,6 @@
 import express from "express";
 import UserController from "../controller/UserController";
+import upload from "../middleware/upload";
 const router = express.Router();
 
 // api login
@@ -15,7 +16,11 @@ router.post("/acceptRequestAddFriend", UserController.acceptRequestAddFriend);
 router.post("/rejectRequestAddFriend", UserController.rejectRequestAddFriend);
 // api chat_room/message
 router.get("/get-chat-room", UserController.getChatRoom);
-router.post("/send-message", UserController.sendMessage);
+router.post(
+    "/send-message",
+    upload.single("image"),
+    UserController.sendMessage
+);
 
 //get notification
 router.get("/get-notify-request-friend", UserController.getNotiFyRequest);
