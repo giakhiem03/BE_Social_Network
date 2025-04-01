@@ -1,8 +1,9 @@
 const { Sequelize } = require("sequelize");
 
-const sequelize = new Sequelize("project_nodejs", "root", "khiemvn412", {
-    host: "127.0.0.1",
-    dialect: "mysql",
+const sequelize = new Sequelize("project_nodejs", "root", "Admin@123", {
+  host: "localhost",
+  dialect: "mysql",
+  port: 3307,
 });
 
 export default sequelize;
