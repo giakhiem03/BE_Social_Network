@@ -357,7 +357,6 @@ class UserService {
                         },
                     ],
                 });
-
                 if (res2) {
                     return resolve({
                         errCode: 0,
@@ -384,15 +383,30 @@ class UserService {
     sendMessage = (room_chat_id, user_id, content, image) => {
         return new Promise(async (resolve, reject) => {
             try {
-                await db.Message.create({
+                let newMessage = await db.Message.create({
                     room_chat_id,
                     user_id,
                     content,
                     image,
                 });
+                // Lấy thông tin người gửi (có thể bỏ nếu không cần)
+                let userInfo = await db.User.findOne({
+                    where: { id: user_id },
+                    attributes: ["id", "username", "avatar"],
+                });
+
                 resolve({
                     errCode: 0,
                     message: "Send a message succeed!",
+                    data: {
+                        id: newMessage.id,
+                        room_chat_id: newMessage.room_chat_id,
+                        user_id: newMessage.user_id,
+                        content: newMessage.content,
+                        image: newMessage.image,
+                        createdAt: newMessage.updatedAt,
+                        createdAt: newMessage.createdAt,
+                    },
                 });
             } catch (error) {
                 resolve({ errCode: -1, message: error.message });
