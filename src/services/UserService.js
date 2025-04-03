@@ -164,33 +164,71 @@ class UserService {
         });
     };
 
-    searchUserByFullName = (fullname) => {
+    searchUserByFullName = (fullName) => {
         return new Promise(async (resolve, reject) => {
             try {
                 let res = await db.User.findAll({
                     where: {
-                        fullname: {
-                            [Op.like]: `%${fullname}%`,
+                        fullName: {
+                            [Op.like]: `%${fullName}%`,
                         },
                     },
-                    attributes: { exclude: ["password"] },
                     include: [
                         {
-                            model: db.Gender,
-                            as: "genders",
-                            attributes: ["gender"],
+                            model: db.Friendship,
+                            as: "friendship_1",
+                            where: { status: 2 },
+                            attributes: ["id"],
+                            include: [
+                                {
+                                    model: db.User,
+                                    as: "user_2",
+                                    attributes: ["id"],
+                                },
+                            ],
+                            required: false,
+                        },
+                        {
+                            model: db.Friendship,
+                            as: "friendship_2",
+                            where: { status: 2 },
+                            attributes: ["id"],
+                            include: [
+                                {
+                                    model: db.User,
+                                    as: "user_1",
+                                    attributes: ["id"],
+                                },
+                            ],
+                            required: false,
                         },
                     ],
-                    raw: true,
-                    nest: true,
+                    attributes: { exclude: ["password"] },
                 });
                 if (res && res.length > 0) {
+                    const friendships = res.map((user) => {
+                        // Lấy danh sách bạn bè từ friendship_1 (user_2) và friendship_2 (user_1)
+                        const friends = [
+                            ...user.friendship_1.map((f) => f.user_2.id),
+                            ...user.friendship_2.map((f) => f.user_1.id),
+                        ];
+                        return {
+                            id: user.id,
+                            fullName: user.fullName,
+                            avatar: user.avatar,
+                            friends,
+                        };
+                    });
                     resolve({
                         errCode: 0,
-                        data: res,
+                        data: friendships,
                     });
                 } else {
-                    resolve({ errCode: 1, data: fullname });
+                    resolve({
+                        errCode: 0,
+                        message: `User isn't found!`,
+                        data: [],
+                    });
                 }
             } catch (error) {
                 resolve({ errCode: -1, message: error.message });
@@ -203,13 +241,13 @@ class UserService {
             try {
                 let user = await db.User.findOne({
                     where: { id },
-                    attributes: { exclude: ['password'] },
+                    attributes: { exclude: ["password"] },
                     include: [
                         {
                             model: db.Gender,
                             as: "genders",
                             attributes: ["gender"],
-                        }
+                        },
                     ],
                     raw: true,
                     nest: true,
@@ -218,12 +256,12 @@ class UserService {
                 if (user) {
                     resolve({
                         errCode: 0,
-                        data: user
+                        data: user,
                     });
                 } else {
                     resolve({
                         errCode: 1,
-                        message: "User not found!"
+                        message: "User not found!",
                     });
                 }
             } catch (error) {

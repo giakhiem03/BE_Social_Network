@@ -37,8 +37,8 @@ class UserController {
 
     searchUserByFullName = async (req, res) => {
         try {
-            let { fullname } = req.query;
-            let response = await UserService.searchUserByFullName(fullname);
+            let { fullName } = req.query;
+            let response = await UserService.searchUserByFullName(fullName);
 
             return res.status(200).json(response);
         } catch (error) {
@@ -54,7 +54,9 @@ class UserController {
             const response = await UserService.searchUserById(id); // Gọi hàm từ UserService
             return res.status(200).json(response); // Trả về kết quả
         } catch (error) {
-            return res.status(200).json({ errCode: -1, message: error.message }); // Xử lý lỗi
+            return res
+                .status(200)
+                .json({ errCode: -1, message: error.message }); // Xử lý lỗi
         }
     };
 
