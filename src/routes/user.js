@@ -8,6 +8,7 @@ router.post("/login", UserController.loginAccount);
 router.post("/register", UserController.registerAccount);
 // api search
 router.get("/search", UserController.searchUserByFullName);
+router.get("/search-by-id", UserController.searchUserById);
 // api get friend list
 router.get("/friend-list", UserController.getFriendList);
 // api add friend

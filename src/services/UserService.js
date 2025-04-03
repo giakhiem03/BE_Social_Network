@@ -198,6 +198,40 @@ class UserService {
         });
     };
 
+    searchUserById = (id) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let user = await db.User.findOne({
+                    where: { id },
+                    attributes: { exclude: ['password'] },
+                    include: [
+                        {
+                            model: db.Gender,
+                            as: "genders",
+                            attributes: ["gender"],
+                        }
+                    ],
+                    raw: true,
+                    nest: true,
+                });
+
+                if (user) {
+                    resolve({
+                        errCode: 0,
+                        data: user
+                    });
+                } else {
+                    resolve({
+                        errCode: 1,
+                        message: "User not found!"
+                    });
+                }
+            } catch (error) {
+                resolve({ errCode: -1, message: error.message });
+            }
+        });
+    };
+
     getDetailUser = (id) => {
         return new Promise(async (resolve, reject) => {
             try {
