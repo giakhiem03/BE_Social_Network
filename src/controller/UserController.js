@@ -47,6 +47,16 @@ class UserController {
         }
     };
 
+    searchUserById = async (req, res) => {
+        try {
+            const { id } = req.query; // Lấy ID từ query string
+            const response = await UserService.searchUserById(id); // Gọi hàm từ UserService
+            return res.status(200).json(response); // Trả về kết quả
+        } catch (error) {
+            return res.status(200).json({ errCode: -1, message: error.message }); // Xử lý lỗi
+        }
+    };
+
     getDetailUser = async (req, res) => {
         try {
             let { id } = req.params;
