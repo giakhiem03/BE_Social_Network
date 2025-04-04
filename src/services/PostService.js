@@ -59,6 +59,12 @@ class PostService {
     addNewPost = (post_by, image, description) => {
         return new Promise(async (resolve, reject) => {
             try {
+                if (!post_by || (!description && !image)) {
+                    resolve({
+                        errCode: 1,
+                        message: "Missing required fields!",
+                    });
+                }
                 await db.Post.create({ post_by, image, description });
                 resolve({ errCode: 0, message: "Create a new post succeed!" });
             } catch (error) {

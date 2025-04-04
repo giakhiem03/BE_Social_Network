@@ -226,7 +226,7 @@ class UserService {
                 } else {
                     resolve({
                         errCode: 0,
-                        message: `User isn't found!`,
+                        message: `Users isn't found!`,
                         data: [],
                     });
                 }

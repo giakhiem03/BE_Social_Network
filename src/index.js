@@ -10,7 +10,7 @@ import { ConnectSocket } from "./utils/socket";
 const app = express();
 const port = 3001;
 
-const server = createServer(app); // Tạo HTTP Server
+export const server = createServer(app); // Tạo HTTP Server
 const io = new Server(server, {
     cors: {
         origin: "http://localhost:5173",
