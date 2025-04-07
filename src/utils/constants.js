@@ -1,0 +1,3 @@
+const JWT_SECRET = "SOCIAL_NETWORK";
+
+export { JWT_SECRET };

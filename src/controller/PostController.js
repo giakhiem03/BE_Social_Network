@@ -101,6 +101,16 @@ class PostController {
                 .json({ errCode: -1, message: error.message });
         }
     };
+
+    deleteById = async (req, res) => {
+        try {
+            let { id } = req.query;
+            let response = await PostService.deleteById(id);
+            return res.status(200).json(response);
+        } catch (error) {
+            resolve({ errCode: -1, message: error.message });
+        }
+    };
 }
 
 export default new PostController();

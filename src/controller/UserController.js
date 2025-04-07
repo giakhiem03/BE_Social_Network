@@ -1,6 +1,8 @@
 import { io } from "..";
 import UserService from "../services/UserService";
-
+import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "../utils/constants";
+import { response } from "express";
 class UserController {
     getHome = (req, res) => {
         return res.status(200).json({ message: "Hello world" });
@@ -21,16 +23,69 @@ class UserController {
 
     loginAccount = async (req, res) => {
         try {
-            let user = req.body;
-            let response = await UserService.loginAccount(
-                user.username,
-                user.password
-            );
+            const { username, password } = req.body;
+            const response = await UserService.loginAccount(username, password);
 
             return res.status(200).json(response);
         } catch (error) {
             return res
+                .status(500)
+                .json({ errCode: -1, message: error.message });
+        }
+    };
+
+    logoutAccount = async (req, res) => {
+        try {
+            res.cookie("token", "", {
+                httpOnly: true,
+                expires: new Date(0), // ngày quá khứ
+                signed: true,
+            });
+            return res
                 .status(200)
+                .json({ errCode: 0, message: "Logged out successfully" });
+        } catch (error) {
+            return res
+                .status(500)
+                .json({ errCode: -1, message: error.message });
+        }
+    };
+
+    loginAccountAuth = async (req, res) => {
+        try {
+            const { username, password } = req.body;
+            const response = await UserService.loginAccountAuth(
+                username,
+                password
+            );
+
+            if (response && response.errCode === 0) {
+                let exp = new Date(Date.now() + 3600 * 1000);
+                let token = jwt.sign(
+                    {
+                        id: response.user_id,
+                        expireIn: exp.getTime(),
+                    },
+                    JWT_SECRET
+                );
+
+                res.cookie("token", token, {
+                    httpOnly: true,
+                    expires: exp,
+                    signed: true,
+                });
+
+                return res.status(200).json({
+                    errCode: 0,
+                    data: token, // thêm token vào response
+                    message: response.message,
+                });
+            } else {
+                return res.status(500).json(response);
+            }
+        } catch (error) {
+            return res
+                .status(500)
                 .json({ errCode: -1, message: error.message });
         }
     };
@@ -219,6 +274,45 @@ class UserController {
             return res
                 .status(200)
                 .json({ errCode: -1, message: error.message });
+        }
+    };
+
+    getUserByToken = async (req, res) => {
+        try {
+            return res.status(200).json({ errCode: 0, data: req.user });
+        } catch (error) {
+            return res
+                .status(200)
+                .json({ errCode: -1, message: error.message });
+        }
+    };
+
+    updateProfile = async (req, res) => {
+        try {
+            let { id, bio, fullName } = req.body;
+
+            let avatarFile = null;
+            if (req.files?.avatar?.[0]) avatarFile = req.files?.avatar?.[0];
+
+            let backgroundFile = null;
+            if (req.files?.background?.[0])
+                backgroundFile = req.files?.background?.[0];
+
+            let avatarPath = avatarFile ? `/img/${avatarFile.filename}` : null;
+            let backgroundPath = backgroundFile
+                ? `/img/${backgroundFile.filename}`
+                : null;
+
+            let response = await UserService.updateProfile(
+                id,
+                bio,
+                fullName,
+                avatarPath,
+                backgroundPath
+            );
+            return res.status(200).json(response);
+        } catch (error) {
+            return res.status(500).json(response);
         }
     };
 }

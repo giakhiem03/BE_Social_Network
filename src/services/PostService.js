@@ -144,6 +144,23 @@ class PostService {
             }
         });
     };
+
+    deleteById = (id) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let post = await db.Post.findOne({
+                    where: { id },
+                });
+                await post.destroy();
+                resolve({
+                    errCode: 0,
+                    message: "Delete post succeed!",
+                });
+            } catch (error) {
+                resolve({ errCode: -1, message: error.message });
+            }
+        });
+    };
 }
 
 export default new PostService();

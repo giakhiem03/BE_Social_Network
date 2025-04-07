@@ -8,6 +8,12 @@ module.exports = (sequelize, DataTypes) => {
                 targetKey: "id",
                 as: "genders",
             });
+
+            User.belongsTo(models.Role, {
+                foreignKey: "role",
+                targetKey: "id",
+            });
+
             User.hasMany(models.Friendship, {
                 foreignKey: "user_id_1",
                 as: "friendship_1", // những lời mời bạn bè đã gửi đi
@@ -28,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
             bio: DataTypes.STRING,
             background: DataTypes.TEXT,
             email: DataTypes.STRING,
+            role: DataTypes.INTEGER,
             avatar: DataTypes.TEXT,
         },
         {

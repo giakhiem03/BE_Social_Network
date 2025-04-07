@@ -14,6 +14,11 @@ class UserService {
                     this.salt
                 );
                 user.password = passwordEncoded;
+                user.role = 1;
+                user.fullName = user.username;
+                user.gender = 1;
+                user.avatar = "/img/default.png";
+                user.background = "/img/default.png";
                 let res = await db.User.findOne({
                     where: { username: user.username },
                 });
@@ -37,7 +42,7 @@ class UserService {
             try {
                 let user = await db.User.findOne({
                     where: { username },
-                    // attributes: { exclude: ["password"] },
+                    attributes: { exclude: ["password"] },
                     include: [
                         {
                             model: db.Gender,
@@ -86,6 +91,39 @@ class UserService {
                         resolve({
                             errCode: 0,
                             data: user,
+                            message: "Login succeed!",
+                        });
+                    } else {
+                        resolve({
+                            errCode: 1,
+                            message:
+                                "Wrong password! please try another password!",
+                        });
+                    }
+                } else {
+                    resolve({ errCode: 2, message: "User not found" });
+                }
+            } catch (error) {
+                resolve({ errCode: -1, message: error.message });
+            }
+        });
+    };
+
+    loginAccountAuth = (username, password) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let user = await db.User.findOne({
+                    where: { username },
+                });
+                if (user) {
+                    let checkPW = await bcrypt.compareSync(
+                        password,
+                        user.password
+                    );
+                    if (checkPW) {
+                        resolve({
+                            errCode: 0,
+                            user_id: user.id,
                             message: "Login succeed!",
                         });
                     } else {
@@ -309,6 +347,10 @@ class UserService {
                                 },
                             ],
                             required: false,
+                        },
+                        {
+                            model: db.Role,
+                            attributes: ["role_name"],
                         },
                     ],
                     raw: true,
@@ -568,6 +610,40 @@ class UserService {
                         data: friendList,
                     });
                 }
+            } catch (error) {
+                reject({ errCode: -1, message: error.message });
+            }
+        });
+    };
+
+    updateProfile = (id, bio, fullName, avatarPath, backgroundPath) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let user = await db.User.findOne({
+                    where: { id },
+                    attributes: { exclude: ["password"] },
+                    include: [
+                        {
+                            model: db.Gender,
+                            as: "genders",
+                            attributes: ["gender"],
+                        },
+                        {
+                            model: db.Role,
+                            attributes: ["role_name"],
+                        },
+                    ],
+                });
+                user.bio = bio;
+                user.fullName = fullName;
+                if (avatarPath) user.avatar = avatarPath;
+                if (backgroundPath) user.background = backgroundPath;
+                await user.save();
+                resolve({
+                    errCode: 0,
+                    data: user,
+                    message: "Profile updated successfully!",
+                });
             } catch (error) {
                 reject({ errCode: -1, message: error.message });
             }
