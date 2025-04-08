@@ -34,7 +34,6 @@ router.post(
     "/addfriend",
     authenticateToken,
     authorizeRoles("user", "admin"),
-    authenticateToken,
     UserController.addNewFriend
 );
 router.post(

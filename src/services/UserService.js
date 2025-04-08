@@ -1,7 +1,7 @@
 import db from "../models";
 import bcrypt from "bcrypt";
 import { raw } from "mysql2";
-import { Op } from "sequelize";
+import { Op, where } from "sequelize";
 
 class UserService {
     salt = bcrypt.genSaltSync(10);
@@ -373,6 +373,19 @@ class UserService {
     addNewFriend = (user_1, user_2) => {
         return new Promise(async (resolve, reject) => {
             try {
+                let res = db.Friendship.findOne({
+                    where: {
+                        user_id_1: user_1,
+                        user_id_2: user_2,
+                        status: 1,
+                    },
+                });
+                if (res) {
+                    resolve({
+                        errCode: 1,
+                        message: "You have sent a friend request!",
+                    });
+                }
                 await db.Friendship.create({
                     user_id_1: user_1,
                     user_id_2: user_2,
@@ -534,18 +547,16 @@ class UserService {
                 let res = await db.Friendship.findAll({
                     where: {
                         status: 1,
-                        [Op.or]: [{ user_id_1: id }, { user_id_2: id }],
+                        user_id_2: id,
                     },
+                    attributes: ["id"],
                     include: [
                         {
                             model: db.User,
                             as: "user_1",
                         },
-                        {
-                            model: db.User,
-                            as: "user_2",
-                        },
                     ],
+                    required: false,
                 });
 
                 if (!res || res.length === 0) {
@@ -554,23 +565,9 @@ class UserService {
                         data: [],
                     });
                 }
-                // Chỉ lấy thông tin của người còn lại (không phải id)
-                let result = res.map((friendship) => {
-                    let friend =
-                        friendship.user_id_1 === id
-                            ? friendship.user_2
-                            : friendship.user_1;
-
-                    return {
-                        id: friend.id,
-                        fullName: friend.fullName,
-                        avatar: friend.avatar,
-                        createdAt: friend.createdAt,
-                    };
-                });
                 resolve({
                     errCode: 0,
-                    data: result,
+                    data: res,
                 });
             } catch (error) {
                 reject({ errCode: -1, message: error.message });
