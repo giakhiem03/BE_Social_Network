@@ -373,7 +373,7 @@ class UserService {
     addNewFriend = (user_1, user_2) => {
         return new Promise(async (resolve, reject) => {
             try {
-                let res = db.Friendship.findOne({
+                let res = await db.Friendship.findOne({
                     where: {
                         user_id_1: user_1,
                         user_id_2: user_2,
@@ -385,12 +385,13 @@ class UserService {
                         errCode: 1,
                         message: "You have sent a friend request!",
                     });
+                } else {
+                    await db.Friendship.create({
+                        user_id_1: user_1,
+                        user_id_2: user_2,
+                        status: 1,
+                    });
                 }
-                await db.Friendship.create({
-                    user_id_1: user_1,
-                    user_id_2: user_2,
-                    status: 1,
-                });
                 resolve({
                     errCode: 0,
                     message: "Send a request add friend succeed!",
