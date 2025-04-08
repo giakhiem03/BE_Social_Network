@@ -20,12 +20,7 @@ router.put(
     UserController.updateProfile
 );
 // api search
-router.get(
-    "/search",
-    authenticateToken,
-    authenticateToken,
-    UserController.searchUserByFullName
-);
+router.get("/search", authenticateToken, UserController.searchUserByFullName);
 router.get("/search-by-id", authenticateToken, UserController.searchUserById);
 // api get friend list
 router.get("/friend-list", authenticateToken, UserController.getFriendList);
