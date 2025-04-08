@@ -2,21 +2,24 @@ import jwt from "jsonwebtoken";
 import UserService from "../services/UserService";
 import { JWT_SECRET } from "../utils/constants";
 
-const authenticateToken = (req, res, next) => {
+const authenticateToken = async (req, res, next) => {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1]; // Bearer <token>
 
     if (!token)
         return res.status(401).json({ errCode: 1, message: "Please login!" });
-
-    jwt.verify(token, JWT_SECRET, async (err, payload) => {
-        let user = await UserService.getDetailUser(payload.id);
-        delete user.data.friendship_1;
-        delete user.data.friendship_2;
-        if (err) return res.status(403).json({ errCode: -1, message: err });
-        req.user = user.data; // attach decoded user to request
+    let result = jwt.verify(token, JWT_SECRET);
+    let user = await UserService.getDetailUser(result.id);
+    delete user.data.friendship_1;
+    delete user.data.friendship_2;
+    if (result.expireIn > Date.now()) {
+        req.user = user.data;
         next();
-    });
+    } else {
+        return res
+            .status(401)
+            .json({ errCode: -1, message: "Token is invalid or expired!" });
+    }
 };
 
 // Authorization (check quyền)
