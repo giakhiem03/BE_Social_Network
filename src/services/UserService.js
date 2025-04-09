@@ -647,6 +647,24 @@ class UserService {
             }
         });
     };
+    addNewGroup = (user_id, group_name, group_avatar) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let group = await db.Group.create({
+                    user_id,
+                    group_name,
+                    group_avatar,
+                });
+                resolve({
+                    errCode: 0,
+                    message: "Create a group succeed!",
+                    data: group,
+                });
+            } catch (error) {
+                resolve({ errCode: -1, message: error.message });
+            }
+        });
+    }
 }
 
 export default new UserService();
