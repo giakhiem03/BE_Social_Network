@@ -102,6 +102,18 @@ class PostController {
         }
     };
 
+    updatePost = async (req, res) => {
+        try {
+            let { id, description } = req.body;
+            console.log(id);
+            const image = req.file ? `/img/${req.file.filename}` : null;
+            let response = await PostService.updatePost(id, description, image);
+            return res.status(200).json(response);
+        } catch (error) {
+            resolve({ errCode: -1, message: error.message });
+        }
+    };
+
     deleteById = async (req, res) => {
         try {
             let { id } = req.query;

@@ -145,6 +145,25 @@ class PostService {
         });
     };
 
+    updatePost = (id, description, image) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let post = await db.Post.findOne({
+                    where: { id },
+                });
+                post.description = description;
+                if (image) post.image = image;
+                await post.save();
+                resolve({
+                    errCode: 0,
+                    message: "Update post succeed!",
+                });
+            } catch (error) {
+                resolve({ errCode: -1, message: error.message });
+            }
+        });
+    };
+
     deleteById = (id) => {
         return new Promise(async (resolve, reject) => {
             try {

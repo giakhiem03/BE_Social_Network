@@ -17,6 +17,14 @@ router.post(
     upload.single("image"),
     PostController.addNewPost
 );
+// update post
+router.put(
+    "/update-post",
+    authenticateToken,
+    authorizeRoles("user", "admin"),
+    upload.single("image"),
+    PostController.updatePost
+);
 // delete post
 router.delete(
     "/deleteById",

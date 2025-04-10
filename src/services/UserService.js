@@ -208,7 +208,7 @@ class UserService {
                 let res = await db.User.findAll({
                     where: {
                         fullName: {
-                            [Op.like]: `%${fullName}%`,
+                            [Op.like]: `%${fullName.trim()}%`,
                         },
                     },
                     include: [
