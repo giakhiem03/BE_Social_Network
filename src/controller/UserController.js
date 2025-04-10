@@ -315,17 +315,6 @@ class UserController {
             return res.status(500).json(response);
         }
     };
-
-    addNewGroup = (req, res) => {
-        try {
-            let { groupName, members } = req.body;
-            let response = UserService.addNewGroup(groupName, members);
-
-            return res.status(200).json(response);
-        } catch (error) {
-            return res.status(500).json({ errCode: -1, message: error.message });
-        }
-    }
 }
 
 export default new UserController();
