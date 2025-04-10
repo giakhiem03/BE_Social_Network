@@ -62,4 +62,5 @@ router.get(
 router.get("/:id", authenticateToken, UserController.getDetailUser);
 // api default
 router.get("/", authenticateToken, UserController.getHome);
+
 export default router;
