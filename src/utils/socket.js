@@ -43,7 +43,6 @@ export const ConnectSocket = (io) => {
                     fs.writeFileSync(uploadPath, buffer); // Ghi file
                     imagePath = `/upload/${imageName}`; // Đường dẫn ảnh để lưu vào DB
                 }
-                console.log(content);
                 let newMessage = await UserService.sendMessage(
                     roomId,
                     userId,

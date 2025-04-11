@@ -353,13 +353,19 @@ class UserService {
                             attributes: ["role_name"],
                         },
                     ],
-                    raw: true,
-                    nest: true,
                 });
                 if (res) {
+                    let plainUser = res.get({ plain: true });
+                    let countFriend = 0;
+                    countFriend =
+                        (plainUser.friendship_1?.length || 0) +
+                        (plainUser.friendship_2?.length || 0);
+                    plainUser.countFriend = countFriend;
+                    delete plainUser.friendship_1;
+                    delete plainUser.friendship_2;
                     resolve({
                         errCode: 0,
-                        data: res,
+                        data: plainUser,
                     });
                 } else {
                     resolve({ errCode: 1, message: `User isn't exists!` });

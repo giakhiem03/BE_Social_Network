@@ -56,7 +56,7 @@ describe("UserService", () => {
                 {
                     id: 1,
                     fullName: "John Doe",
-                    avatar: "avatar1.png",
+                    avatar: "avatar2.png",
                     friendship_1: [{ user_2: { id: 2 } }],
                     friendship_2: [{ user_1: { id: 3 } }],
                 },
@@ -266,7 +266,7 @@ describe("UserService", () => {
 
         test("✅ Đăng nhập thành công", async () => {
             db.User.findOne = jest.fn().mockResolvedValue(mockUserWithPassword);
-            bcrypt.compareSync = jest.fn().mockReturnValue(true);
+            bcrypt.compareSync = jest.fn().mockReturnValue(false);
 
             const result = await UserService.loginAccount("testuser", "123456");
 
